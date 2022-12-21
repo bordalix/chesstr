@@ -13,7 +13,6 @@
 <section id="chess">
   <h1>Chesstr</h1>
   <h3>A chessboard powered by Nostr</h3>
-  <p id="nostr">Connecting to nostr relay</p>
   <p id="status"></p>
   <div id="topPieces" class="pieces"></div>
   <div id="board1"></div>
@@ -22,6 +21,32 @@
     <p><button id="resetGame">Reset game</button></p>
     <p><button id="flipBoard">Flip board</button></p>
   </div>
+  <details>
+    <summary>Know more</summary>
+    <p>Just create a random url and share it with your friend.</p>
+    <p>
+      The full url is used as the seed for the private key, so the same url
+      means the same key.
+    </p>
+    <p>
+      Using nostr, each client subscribe to itself, and sends an event to itself
+      when the board changes, putting them in sync.
+    </p>
+    <p>
+      Try it at
+      <a href="https://chesstr.pages.dev?1234">
+        https://chesstr.pages.dev?1234 </a
+      ><br />
+      (change <u>1234</u> to some random number)
+    </p>
+    <p>
+      Repo at
+      <a href="https://github.com/bordalix/chesstr"
+        >https://github.com/bordalix/chesstr</a
+      >
+    </p>
+  </details>
+  <p id="nostr">Connecting to nostr relay</p>
 </section>
 
 <script src="./js/script.js"></script>
