@@ -1,0 +1,28 @@
+<script src="./js/jquery-3.6.2.min.js"></script>
+<script src="./js/chessboard-1.0.0.min.js"></script>
+<script src="./js/chess-1.0.0-alpha.0.min.js"></script>
+
+<script src="https://bitcoincore.tech/apps/bitcoinjs-ui/lib/bitcoinjs-lib.js"></script>
+<script src="https://bundle.run/bip32@2.0.6"></script>
+<script src="https://bundle.run/buffer@6.0.3"></script>
+<script src="https://bundle.run/noble-secp256k1@1.2.14"></script>
+
+<link rel="stylesheet" href="css/chess.css" />
+<link rel="stylesheet" href="css/chessboard-1.0.0.min.css" />
+
+<section id="chess">
+  <h1>Chesstr</h1>
+  <h3>A chessboard powered by Nostr</h3>
+  <p id="nostr">Connecting to nostr relay</p>
+  <p id="status"></p>
+  <div id="topPieces" class="pieces"></div>
+  <div id="board1"></div>
+  <div id="bottomPieces" class="pieces"></div>
+  <div class="buttons">
+    <p><button id="resetGame">Reset game</button></p>
+    <p><button id="flipBoard">Flip board</button></p>
+  </div>
+</section>
+
+<script src="./js/script.js"></script>
+<script src="./js/nostr.js"></script>

@@ -1,0 +1,41 @@
+#chess {
+  width: 400px;
+  margin: 0 auto;
+  padding-bottom: 10rem;
+}
+
+#chess #myBoard {
+  margin: 1rem 0;
+}
+
+#chess .buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 5px;
+}
+
+#chess .highlight-white {
+  box-shadow: inset 0 0 3px 3px yellow;
+}
+#chess .highlight-black {
+  box-shadow: inset 0 0 3px 3px blue;
+}
+
+#chess .piecesClock {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 5px 1rem 0;
+}
+
+#chess .pieces {
+  height: 30px;
+}
+
+#chess .pieces img {
+  width: 23px;
+  height: 23px;
+}
+
+#chess p {
+  margin: 0;
+}
