@@ -31,47 +31,39 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
     <!-- CSS -->
-    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="../main.css" />
+    <link rel="stylesheet" href="./css/chess.css" />
+    <link rel="stylesheet" href="./css/chessboard-1.0.0.min.css" />
     <!-- Lightning -->
     <meta name="lightning" content="bordalix@getalby.com" />
   </head>
 
   <body>
-    <section id="intro">
+    <script src="./js/jquery-3.6.2.min.js"></script>
+    <script src="./js/chessboard-1.0.0.min.js"></script>
+    <script src="./js/chess-1.0.0-alpha.0.min.js"></script>
+
+    <script src="https://bitcoincore.tech/apps/bitcoinjs-ui/lib/bitcoinjs-lib.js"></script>
+    <script src="https://bundle.run/bip32@2.0.6"></script>
+    <script src="https://bundle.run/buffer@6.0.3"></script>
+    <script src="https://bundle.run/noble-secp256k1@1.2.14"></script>
+
+    <section id="chess">
       <h1>Chesstr</h1>
       <h3>A chessboard powered by Nostr</h3>
-      <p>
-        Want to play chess with a friend anywhere?<br />
-        Just generate a random board and share the url.
-      </p>
-      <p>
-        <button onClick="gotoRandomURL()">Generate board</button>
-      </p>
-      <details>
-        <summary>Know more</summary>
-        <p>Just create a random url and share it with your friend.</p>
-        <p>
-          The full url is used as the seed for the private key, so the same url
-          means the same key, and the same key means the same board.
-        </p>
-        <p>
-          Using nostr, each client subscribe to itself, and sends an event to
-          itself when the board changes, putting them in sync.
-        </p>
-        <p>
-          Repo at
-          <a href="https://github.com/bordalix/chesstr"
-            >https://github.com/bordalix/chesstr</a
-          >
-        </p>
-      </details>
+      <p id="status"></p>
+      <div id="topPieces" class="pieces"></div>
+      <div id="board1"></div>
+      <div id="bottomPieces" class="pieces"></div>
+      <div class="buttons">
+        <p><button id="resetGame">Reset game</button></p>
+        <p><button id="flipBoard">Flip board</button></p>
+      </div>
     </section>
-    <script>
-      const gotoRandomURL = () => {
-        const rand = Math.floor(Math.random() * 1_000_000);
-        const url = window.location.toString() + `board?${rand}`;
-        window.location.assign(url);
-      };
-    </script>
+
+    <p id="nostr">Connecting to nostr relay</p>
+
+    <script src="./js/script.js"></script>
+    <script src="./js/nostr.js"></script>
   </body>
 </html>

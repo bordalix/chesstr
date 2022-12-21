@@ -1,4 +1,3 @@
-
 let game = new Chess()
 let lastmove
 
@@ -85,6 +84,12 @@ const utils = {
     })
     utils.addMissingPieces(pieces)
   },
+  // generates a random url
+  gotoRandomURL() {
+    const rand = Math.floor(Math.random() * 1_000_000)
+    const url = window.location.toString() + `?${rand}`
+    window.location.assign(url)
+  }
 }
 
 // react to events
@@ -152,3 +157,5 @@ $('#flipBoard').on('click', () => {
   board.flip()
   utils.highlightMove()
 })
+
+

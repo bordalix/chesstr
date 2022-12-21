@@ -1,9 +1,3 @@
-#chess {
-  width: 400px;
-  margin: 0 auto;
-  padding-bottom: 10rem;
-}
-
 #chess .buttons {
   display: flex;
   justify-content: space-between;
@@ -30,4 +24,8 @@
   border: 1px solid #ccc;
   padding: 1rem;
   margin: 1rem 0;
+}
+
+#chess p {
+  margin: 0;
 }
