@@ -1,3 +1,30 @@
+body {
+  width: 400px;
+  margin: 0 auto;
+}
+
+details {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+h3 {
+  font-size: 1rem;
+  margin-top: 0;
+}
+
+#lead {
+  display: flex;
+  justify-content: space-between;
+}
+
+#lead img {
+  position: relative;
+  top: 4px;
+  height: 1rem;
+}
+
 #chess .buttons {
   display: flex;
   justify-content: space-between;
@@ -28,4 +55,9 @@
 
 #chess p {
   margin: 0;
+}
+
+#relay {
+  font-size: 0.8rem;
+  margin-bottom: 0;
 }
