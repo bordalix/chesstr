@@ -82,7 +82,7 @@ const boardUtils = {
     const cfg = {
       snapbackSpeed: 550,
       appearSpeed: 1500,
-      draggable: true,
+      draggable: false,
       position: 'start',
       onDragStart: eventListeners.onDragStart,
       onDrop: eventListeners.onDrop,
