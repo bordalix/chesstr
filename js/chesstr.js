@@ -1,6 +1,6 @@
 // case is main url redirect to random url
 if (window.location.search === '') {
-  const rand = Math.floor(Math.random() * 1_000_000)
+  const rand = Math.random().toString(36).substring(2, 10)
   const url = window.location.toString() + `?${rand}`
   window.location.assign(url)
 }
