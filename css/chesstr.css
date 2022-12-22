@@ -3,15 +3,9 @@ body {
   margin: 0 auto;
 }
 
-details {
-  border: 1px solid #ccc;
-  padding: 1rem;
+h1 {
+  font-size: 1.2rem;
   margin: 1rem 0;
-}
-
-h3 {
-  font-size: 1rem;
-  margin-top: 0;
 }
 
 #lead {
@@ -28,14 +22,30 @@ h3 {
 #chess .buttons {
   display: flex;
   justify-content: space-between;
-  margin-right: 5px;
+  margin: 0 5px 0 0;
+}
+
+#chess details {
+  background-color: rgba(236, 210, 166, 0.3);
+  border: 1px solid #ccc;
+  padding: .5rem;
+  margin: 1rem 0;
+}
+
+#chess details p {
+  margin: 1rem 0;
 }
 
 #chess .highlight-white {
   box-shadow: inset 0 0 3px 3px yellow;
 }
+
 #chess .highlight-black {
   box-shadow: inset 0 0 3px 3px blue;
+}
+
+#chess p {
+  margin: 0;
 }
 
 #chess .pieces {
@@ -45,19 +55,4 @@ h3 {
 #chess .pieces img {
   width: 23px;
   height: 23px;
-}
-
-#chess details {
-  border: 1px solid #ccc;
-  padding: 1rem;
-  margin: 1rem 0;
-}
-
-#chess p {
-  margin: 0;
-}
-
-#relay {
-  font-size: 0.8rem;
-  margin-bottom: 0;
 }

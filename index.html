@@ -44,13 +44,35 @@
     <section id="chess">
       <h1>Chesstr</h1>
       <div id="lead">
-        <h3>A chessboard powered by Nostr</h3>
-        <h3>
+        <p>A chessboard powered by Nostr</p>
+        <p>
           <a href="https://twitter.com/bordalix/"
             ><img src="/img/assets/twitter.png"
           /></a>
-        </h3>
+        </p>
       </div>
+      <details>
+        <summary>Know more</summary>
+        <p>Just create a random url and share it with your friend.</p>
+        <p>
+          The full url is used as the seed for the private key, so the same url
+          means the same key, and the same key means the same board.
+        </p>
+        <p>
+          Using nostr, each client subscribe to itself, and sends an event to
+          itself when the board changes, putting them in sync.
+        </p>
+        <p>
+          Repo at
+          <a href="https://github.com/bordalix/chesstr"
+            >https://github.com/bordalix/chesstr</a
+          >
+        </p>
+        <p>
+          Twitter <a href="https://twitter.com/bordalix">thread</a> for
+          discussion
+        </p>
+      </details>
       <p id="status"></p>
       <div id="topPieces" class="pieces"></div>
       <div id="board1"></div>
