@@ -64,6 +64,11 @@ const boardUtils = {
     })
     boardUtils.addMissingPieces(pieces)
   },
+  // rotate board and highlight last move
+  flipBoard() {
+    board.flip()
+    boardUtils.highlightMove()
+  },
   // highlight last move
   highlightMove() {
     // remove all previous highlights
@@ -90,6 +95,10 @@ const boardUtils = {
     }
     board = new ChessBoard('board1', cfg)
     boardUtils.updateStatus()
+  },
+  // reset board/game
+  resetGame() {
+    nostrUtils.sendGame({ fen: 'start' })
   },
   // update board status
   updateStatus() {
@@ -210,11 +219,8 @@ const eventListeners = {
 boardUtils.initializeBoard()
 
 // buttons click handlers
-$('#resetGame').on('click', () => nostrUtils.sendGame({ fen: 'start' }))
-$('#flipBoard').on('click', () => {
-  board.flip()
-  boardUtils.highlightMove()
-})
+$('#resetGame').on('click', () => boardUtils.resetGame())
+$('#flipBoard').on('click', () => boardUtils.flipBoard())
 
 // get keys (url will be the seed fpr the private key)
 const [privKey, pubKey] = nostrUtils.getKeys()
