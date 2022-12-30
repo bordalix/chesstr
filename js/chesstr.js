@@ -226,6 +226,7 @@ $('#flipBoard').on('click', () => boardUtils.flipBoard())
 const [privKey, pubKey] = nostrUtils.getKeys()
 
 // open web socket
+const subId = 'my-sub'
 const relay = 'wss://nostr.v0l.io'
 const ws = new WebSocket(relay)
 
@@ -236,7 +237,7 @@ ws.onopen = () => {
   ws.send(
     JSON.stringify([
       'REQ',
-      'my-sub',
+      subId,
       filter,
     ]),
   )
@@ -247,9 +248,9 @@ ws.onopen = () => {
 // Listen for messages from nostr
 // On a board update, verify sig and update board
 ws.onmessage = (event) => {
-  const data = JSON.parse(event.data)
-  if (data?.[2]?.content) {
-    const { content, id, sig } = data[2]
+  const [msgType, subscriptionId, data] = JSON.parse(event.data)
+  if (msgType === 'EVENT' && subscriptionId === subId) {
+    const { content, id, sig } = data
     nobleSecp256k1.schnorr
       .verify(sig, id, pubKey)
       .then((validSig) => {
