@@ -36,8 +36,8 @@ const boardUtils = {
   },
   // delete all missing pieces
   cleanMissingPieces() {
-    $('#topPieces').html('')
-    $('#bottomPieces').html('')
+    $('#topPieces').text('')
+    $('#bottomPieces').text('')
   },
   // from a fen, find out which pieces are missing
   findMissingPieces(fen) {
@@ -114,7 +114,7 @@ const boardUtils = {
       if (game.in_check()) status += `, ${moveColor} is in check`
     }
     // update status
-    $('#status').html(status)
+    $('#status').text(status)
   },
 }
 
@@ -232,7 +232,7 @@ const ws = new WebSocket(relay)
 
 // update relay message and subscribe to events
 ws.onopen = () => {
-  $('#relay').html(`Connected to ${relay}`)
+  $('#relay').text(`Connected to ${relay}`)
   const filter = { authors: [pubKey] }
   ws.send(
     JSON.stringify([
