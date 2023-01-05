@@ -39,6 +39,9 @@ const boardUtils = {
     $('#topPieces').text('')
     $('#bottomPieces').text('')
   },
+  employFen() {
+    nostrUtils.sendGame({ fen: $('#gameFen').val() })
+  },
   // from a fen, find out which pieces are missing
   findMissingPieces(fen) {
     const pieces = {}
@@ -212,6 +215,15 @@ const eventListeners = {
     }
     boardUtils.highlightMove()
     boardUtils.updateStatus()
+    $('#gameFen').val(game.fen()).change()
+  },
+  // on change on the fen input
+  onFen() {
+    const fen = $('#gameFen').val()
+    const { valid, error } = game.validate_fen(fen)
+    if (!valid) console.error('invalid fen:', error)
+    $('#employFen').text(valid ? 'Apply' : 'Invalid')
+    $('#employFen').prop('disabled', !valid || fen === game.fen())
   }
 }
 
@@ -221,13 +233,17 @@ boardUtils.initializeBoard()
 // buttons click handlers
 $('#resetGame').on('click', () => boardUtils.resetGame())
 $('#flipBoard').on('click', () => boardUtils.flipBoard())
+$('#employFen').on('click', () => boardUtils.employFen())
+
+// change on fen handler
+$('#gameFen').on('change keyup', () => eventListeners.onFen())
 
 // get keys (url will be the seed fpr the private key)
 const [privKey, pubKey] = nostrUtils.getKeys()
 
 // open web socket
 const subId = 'my-sub'
-const relay = 'wss://nostr.v0l.io'
+const relay = 'wss://nostr-01.bolt.observer'
 const ws = new WebSocket(relay)
 
 // update relay message and subscribe to events
