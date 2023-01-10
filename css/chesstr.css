@@ -1,5 +1,5 @@
 body {
-  width: 400px;
+  width: 360px;
   margin: 0 auto;
 }
 
@@ -22,7 +22,7 @@ h1 {
 #chess .buttons {
   display: flex;
   justify-content: space-between;
-  margin: 0 5px 0 0;
+  margin: 0 5px 1rem 0;
 }
 
 #chess details {
