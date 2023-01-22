@@ -204,7 +204,7 @@ const nostrUtils = {
     const content = JSON.stringify({ move, fen })
     const created_at = Math.floor(Date.now() / 1000)
     const kind = 30
-    const tags = []
+    const tags = [['p', 'abcdef0123456789abcdef0123456789']]
     const event = [0, pubKey, created_at, kind, tags, content]
     const message = JSON.stringify(event)
     const hash = bitcoinjs.crypto.sha256(message).toString('hex')
@@ -216,7 +216,7 @@ const nostrUtils = {
             pubkey: pubKey,
             created_at,
             kind,
-            tags: [],
+            tags,
             content,
             sig,
           }
