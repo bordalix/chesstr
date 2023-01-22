@@ -203,7 +203,9 @@ const nostrUtils = {
   sendGame({ move, fen }) {
     const content = JSON.stringify({ move, fen })
     const created_at = Math.floor(Date.now() / 1000)
-    const event = [0, pubKey, created_at, 1, [], content]
+    const kind = 30
+    const tags = []
+    const event = [0, pubKey, created_at, kind, tags, content]
     const message = JSON.stringify(event)
     const hash = bitcoinjs.crypto.sha256(message).toString('hex')
     nobleSecp256k1.schnorr.sign(hash, privKey).then((sig) => {
@@ -213,7 +215,7 @@ const nostrUtils = {
             id: hash,
             pubkey: pubKey,
             created_at,
-            kind: 1,
+            kind,
             tags: [],
             content,
             sig,
