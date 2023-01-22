@@ -243,7 +243,7 @@ const [privKey, pubKey] = nostrUtils.getKeys()
 
 // open web socket
 const subId = 'my-sub'
-const relay = 'wss://nostr-01.bolt.observer'
+const relay = 'wss://nostr-relay.alekberg.net'
 const ws = new WebSocket(relay)
 
 // update relay message and subscribe to events
