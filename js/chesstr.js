@@ -10,6 +10,9 @@ let board
 let lastmove
 let game = new Chess()
 
+const eventIds = {}
+const subId = 'my-sub'
+
 // board utils
 const boardUtils = {
   // add missing pieces
@@ -123,6 +126,27 @@ const boardUtils = {
 
 // crypto utils for nostr
 const nostrUtils = {
+  computeRawPrivkey(node) {
+    return bitcoinjs.ECPair.fromPrivateKey(node.privateKey, {
+      network: bitcoinjs.networks.mainnet,
+    })
+  },
+  getKeys() {
+    const privKey = nostrUtils.getPrivkeyHex().__D.toString('hex')
+    const pubKey = nobleSecp256k1.getPublicKey(privKey, true)
+    //be aware that not all valid bitcoin pubkeys are valid nostr pubkeys. Valid bitcoin pubkeys include uncompressed pubkeys (that start with 04), compressed pubkeys whose y coordinate is positive (that start with 02), and compressed pubkeys whose y coordinate is negative (that start with 03).
+    //Only the ones that start with 02 are valid for nostr, which then allows us to chop off the 02 when storing the pubkey.
+    //So if you change this code to generate random pubkeys, be sure to only use ones that have an 02 at the beginning.
+    //The pubkeyMinus2 variable is the pubkey created a moment ago but without the 02 at the beginning.
+    const pubKeyMinus2 = pubKey.substring(2)
+    return [privKey, pubKeyMinus2]
+  },
+  getPrivkeyHex() {
+    const seed = buffer.Buffer.from(window.location.toString())
+    const node = bip32.fromSeed(seed)
+    const path = "m/44'/1237'/0'/0/0"
+    return nostrUtils.computeRawPrivkey(node.derivePath(path))
+  },
   sendGame({ move, fen }) {
     const content = JSON.stringify({ move, fen })
     const created_at = Math.floor(Date.now() / 1000)
@@ -148,27 +172,6 @@ const nostrUtils = {
         })
     })
   },
-  computeRawPrivkey(node) {
-    return bitcoinjs.ECPair.fromPrivateKey(node.privateKey, {
-      network: bitcoinjs.networks.mainnet,
-    })
-  },
-  getPrivkeyHex() {
-    const seed = buffer.Buffer.from(window.location.toString())
-    const node = bip32.fromSeed(seed)
-    const path = "m/44'/1237'/0'/0/0"
-    return nostrUtils.computeRawPrivkey(node.derivePath(path))
-  },
-  getKeys() {
-    const privKey = nostrUtils.getPrivkeyHex().__D.toString('hex')
-    const pubKey = nobleSecp256k1.getPublicKey(privKey, true)
-    //be aware that not all valid bitcoin pubkeys are valid nostr pubkeys. Valid bitcoin pubkeys include uncompressed pubkeys (that start with 04), compressed pubkeys whose y coordinate is positive (that start with 02), and compressed pubkeys whose y coordinate is negative (that start with 03).
-    //Only the ones that start with 02 are valid for nostr, which then allows us to chop off the 02 when storing the pubkey.
-    //So if you change this code to generate random pubkeys, be sure to only use ones that have an 02 at the beginning.
-    //The pubkeyMinus2 variable is the pubkey created a moment ago but without the 02 at the beginning.
-    const pubKeyMinus2 = pubKey.substring(2)
-    return [privKey, pubKeyMinus2]
-  }
 }
 
 // react to events
@@ -242,7 +245,6 @@ $('#gameFen').on('change keyup', () => eventListeners.onFen())
 const [privKey, pubKey] = nostrUtils.getKeys()
 
 // open web socket
-const subId = 'my-sub'
 const relay = 'wss://nostr-relay.alekberg.net'
 const ws = new WebSocket(relay)
 
