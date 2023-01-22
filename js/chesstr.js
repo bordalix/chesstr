@@ -18,13 +18,21 @@ const relays = [
 const subId = 'my-sub'
 let websockets = []
 
+// storage utils
+const storage = {
+  orientation(color) {
+    if (typeof color === 'undefined') return localStorage.getItem('orientation')
+    localStorage.setItem('orientation', color)
+  },
+}
+
 // board utils
 const boardUtils = {
   // add missing pieces
   addMissingPieces(pieces) {
     const divIds = {
       top: '#topPieces',
-      bottom: '#bottomPieces'
+      bottom: '#bottomPieces',
     }
     boardUtils.cleanMissingPieces()
     for (const piece of Object.keys(pieces)) {
@@ -33,8 +41,8 @@ const boardUtils = {
           ? divIds.top
           : divIds.bottom
         : board.orientation() === 'white'
-          ? divIds.top
-          : divIds.bottom
+        ? divIds.top
+        : divIds.bottom
       for (let i = 0; i < pieces[piece]; i += 1) {
         const img = document.createElement('img')
         img.src = `img/chesspieces/wikipedia/${piece}`
@@ -79,6 +87,7 @@ const boardUtils = {
   flipBoard() {
     board.flip()
     boardUtils.highlightMove()
+    storage.orientation(board.orientation())
   },
   // highlight last move
   highlightMove() {
@@ -106,6 +115,9 @@ const boardUtils = {
     }
     board = new ChessBoard('board1', cfg)
     boardUtils.updateStatus()
+    // check local storage for previous board flip
+    const savedOrientation = storage.orientation()
+    if (savedOrientation) board.orientation(savedOrientation)
   },
   // reset board/game
   resetGame() {
@@ -116,11 +128,12 @@ const boardUtils = {
     let status = ''
     let moveColor = 'White'
     if (game.turn() === 'b') moveColor = 'Black'
-    if (game.in_checkmate()) { // checkmate?
+    if (game.in_checkmate()) {
       status = `Game over, ${moveColor} is in checkmate.`
-    } else if (game.in_draw()) { // draw?
+    } else if (game.in_draw()) {
       status = 'Game over, drawn position'
-    } else { // game still on
+    } else {
+      // game still on
       status = `${moveColor} to move`
       if (game.in_check()) status += `, ${moveColor} is in check`
     }
@@ -158,20 +171,16 @@ const nostrUtils = {
       const ws = new WebSocket(relay)
       websockets.push(ws)
       // on error remove this websocket from array of websockets
-      ws.onerror = () => websockets = websockets.filter(w => w.url !== ws.url)
+      ws.onerror = () => (websockets = websockets.filter((w) => w.url !== ws.url))
       // update relay message and subscribe to events
       ws.onopen = () => {
-        $('#relay').text(`Connected to ${websockets.length} out of ${relays.length} relays`)
-        const filter = { authors: [pubKey] }
-        ws.send(
-          JSON.stringify([
-            'REQ',
-            subId,
-            filter,
-          ]),
+        $('#relay').text(
+          `Connected to ${websockets.length} out of ${relays.length} relays`
         )
+        const filter = { authors: [pubKey] }
+        ws.send(JSON.stringify(['REQ', subId, filter]))
         // Send a ping event every 10 seconds to avoid timeout
-        setInterval(() => ws.send(JSON.stringify({ event: "ping" })), 10000)
+        setInterval(() => ws.send(JSON.stringify({ event: 'ping' })), 10000)
       }
       // Listen for messages from nostr
       // On a board update, verify sig and update board
@@ -182,13 +191,11 @@ const nostrUtils = {
           // prevent duplicate work on same eventid
           if (eventIds[id]) return
           else eventIds[id] = true
-          nobleSecp256k1.schnorr
-            .verify(sig, id, pubKey)
-            .then((validSig) => {
-              if (validSig) {
-                eventListeners.onNostr(JSON.parse(content))
-              }
-            })
+          nobleSecp256k1.schnorr.verify(sig, id, pubKey).then((validSig) => {
+            if (validSig) {
+              eventListeners.onNostr(JSON.parse(content))
+            }
+          })
         }
       }
     }
@@ -200,24 +207,22 @@ const nostrUtils = {
     const message = JSON.stringify(event)
     const hash = bitcoinjs.crypto.sha256(message).toString('hex')
     nobleSecp256k1.schnorr.sign(hash, privKey).then((sig) => {
-      nobleSecp256k1.schnorr
-        .verify(sig, hash, pubKey)
-        .then((isValidSig) => {
-          if (isValidSig) {
-            const fullevent = {
-              id: hash,
-              pubkey: pubKey,
-              created_at,
-              kind: 1,
-              tags: [],
-              content,
-              sig,
-            }
-            for (const ws of websockets) {
-              ws.send(JSON.stringify(['EVENT', fullevent]))
-            }
+      nobleSecp256k1.schnorr.verify(sig, hash, pubKey).then((isValidSig) => {
+        if (isValidSig) {
+          const fullevent = {
+            id: hash,
+            pubkey: pubKey,
+            created_at,
+            kind: 1,
+            tags: [],
+            content,
+            sig,
           }
-        })
+          for (const ws of websockets) {
+            ws.send(JSON.stringify(['EVENT', fullevent]))
+          }
+        }
+      })
     })
   },
 }
@@ -227,9 +232,11 @@ const eventListeners = {
   // do not pick up pieces if the game is over
   // only pick up pieces for the side to move
   onDragStart(source, piece) {
-    if (game.game_over() === true ||
+    if (
+      game.game_over() === true ||
       (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-      (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+      (game.turn() === 'b' && piece.search(/^w/) !== -1)
+    ) {
       return false
     }
   },
@@ -238,7 +245,7 @@ const eventListeners = {
     const move = game.move({
       from: source,
       to: target,
-      promotion: 'q'
+      promotion: 'q',
     })
     // illegal move
     if (move === null) return 'snapback'
@@ -275,7 +282,7 @@ const eventListeners = {
     if (!valid) console.error('invalid fen:', error)
     $('#employFen').text(valid ? 'Apply' : 'Invalid')
     $('#employFen').prop('disabled', !valid || fen === game.fen())
-  }
+  },
 }
 
 // initialize board
@@ -294,6 +301,3 @@ const [privKey, pubKey] = nostrUtils.getKeys()
 
 // start websockets
 nostrUtils.openWebsockets()
-
-
-
