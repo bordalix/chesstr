@@ -10,8 +10,13 @@ let board
 let lastmove
 let game = new Chess()
 
-const eventIds = {}
+const relays = [
+  'wss://nostr.blocs.fr',
+  'wss://nostr.coollamer.com',
+  'wss://nostr-relay.alekberg.net',
+]
 const subId = 'my-sub'
+let websockets = []
 
 // board utils
 const boardUtils = {
@@ -147,6 +152,47 @@ const nostrUtils = {
     const path = "m/44'/1237'/0'/0/0"
     return nostrUtils.computeRawPrivkey(node.derivePath(path))
   },
+  openWebsockets() {
+    const eventIds = {}
+    for (const relay of relays) {
+      const ws = new WebSocket(relay)
+      websockets.push(ws)
+      // on error remove this websocket from array of websockets
+      ws.onerror = () => websockets = websockets.filter(w => w.url !== ws.url)
+      // update relay message and subscribe to events
+      ws.onopen = () => {
+        $('#relay').text(`Connected to ${websockets.length} out of ${relays.length} relays`)
+        const filter = { authors: [pubKey] }
+        ws.send(
+          JSON.stringify([
+            'REQ',
+            subId,
+            filter,
+          ]),
+        )
+        // Send a ping event every 10 seconds to avoid timeout
+        setInterval(() => ws.send(JSON.stringify({ event: "ping" })), 10000)
+      }
+      // Listen for messages from nostr
+      // On a board update, verify sig and update board
+      ws.onmessage = (event) => {
+        const [msgType, subscriptionId, data] = JSON.parse(event.data)
+        if (msgType === 'EVENT' && subscriptionId === subId) {
+          const { content, id, sig } = data
+          // prevent duplicate work on same eventid
+          if (eventIds[id]) return
+          else eventIds[id] = true
+          nobleSecp256k1.schnorr
+            .verify(sig, id, pubKey)
+            .then((validSig) => {
+              if (validSig) {
+                eventListeners.onNostr(JSON.parse(content))
+              }
+            })
+        }
+      }
+    }
+  },
   sendGame({ move, fen }) {
     const content = JSON.stringify({ move, fen })
     const created_at = Math.floor(Date.now() / 1000)
@@ -167,7 +213,9 @@ const nostrUtils = {
               content,
               sig,
             }
-            ws.send(JSON.stringify(['EVENT', fullevent]))
+            for (const ws of websockets) {
+              ws.send(JSON.stringify(['EVENT', fullevent]))
+            }
           }
         })
     })
@@ -244,39 +292,8 @@ $('#gameFen').on('change keyup', () => eventListeners.onFen())
 // get keys (url will be the seed fpr the private key)
 const [privKey, pubKey] = nostrUtils.getKeys()
 
-// open web socket
-const relay = 'wss://nostr-relay.alekberg.net'
-const ws = new WebSocket(relay)
+// start websockets
+nostrUtils.openWebsockets()
 
-// update relay message and subscribe to events
-ws.onopen = () => {
-  $('#relay').text(`Connected to ${relay}`)
-  const filter = { authors: [pubKey] }
-  ws.send(
-    JSON.stringify([
-      'REQ',
-      subId,
-      filter,
-    ]),
-  )
-  // Send a ping event every 10 seconds to avoid timeout
-  setInterval(() => ws.send(JSON.stringify({ event: "ping" })), 10000)
-}
-
-// Listen for messages from nostr
-// On a board update, verify sig and update board
-ws.onmessage = (event) => {
-  const [msgType, subscriptionId, data] = JSON.parse(event.data)
-  if (msgType === 'EVENT' && subscriptionId === subId) {
-    const { content, id, sig } = data
-    nobleSecp256k1.schnorr
-      .verify(sig, id, pubKey)
-      .then((validSig) => {
-        if (validSig) {
-          eventListeners.onNostr(JSON.parse(content))
-        }
-      })
-  }
-}
 
 
