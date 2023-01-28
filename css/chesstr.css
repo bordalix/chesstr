@@ -28,7 +28,7 @@ h1 {
 #chess details {
   background-color: rgba(236, 210, 166, 0.3);
   border: 1px solid #ccc;
-  padding: .5rem;
+  padding: 0.5rem;
   margin: 1rem 0;
 }
 
@@ -55,4 +55,11 @@ h1 {
 #chess .pieces img {
   width: 23px;
   height: 23px;
+}
+
+#info {
+  display: flex;
+  font-size: 0.8rem;
+  justify-content: space-between;
+  padding-right: 5px;
 }

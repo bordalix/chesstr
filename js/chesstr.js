@@ -78,7 +78,8 @@ const boardUtils = {
     }
     Object.keys(allPieces).forEach((piece) => {
       const regexp = new RegExp(piece, 'g')
-      const diff = allPieces[piece].count - (position.match(regexp) || []).length
+      const diff =
+        allPieces[piece].count - (position.match(regexp) || []).length
       if (diff > 0) pieces[allPieces[piece].img] = diff
     })
     boardUtils.addMissingPieces(pieces)
@@ -97,7 +98,9 @@ const boardUtils = {
     $('#board1').find(`.${squareClass}`).removeClass('highlight-black')
     // highlight squares from and to
     if (lastmove && lastmove.color && lastmove.from && lastmove.to) {
-      const highClass = `highlight-${lastmove.color === 'w' ? 'white' : 'black'}`
+      const highClass = `highlight-${
+        lastmove.color === 'w' ? 'white' : 'black'
+      }`
       $('#board1').find(`.square-${lastmove.from}`).addClass(highClass)
       $('#board1').find(`.square-${lastmove.to}`).addClass(highClass)
     }
@@ -171,12 +174,12 @@ const nostrUtils = {
       const ws = new WebSocket(relay)
       websockets.push(ws)
       // on error remove this websocket from array of websockets
-      ws.onerror = () => (websockets = websockets.filter((w) => w.url !== ws.url))
+      ws.onerror = () =>
+        (websockets = websockets.filter((w) => w.url !== ws.url))
       // update relay message and subscribe to events
       ws.onopen = () => {
-        $('#relay').text(
-          `Connected to ${websockets.length} out of ${relays.length} relays`
-        )
+        const status = `${websockets.length}/${relays.length}`
+        $('#relay').text(`Connected to ${status} relays`)
         const filter = { authors: [pubKey] }
         ws.send(JSON.stringify(['REQ', subId, filter]))
         // Send a ping event every 10 seconds to avoid timeout
@@ -303,3 +306,5 @@ const [privKey, pubKey] = nostrUtils.getKeys()
 
 // start websockets
 nostrUtils.openWebsockets()
+
+$(document).ready(() => $('#url').text(window.location.href))
