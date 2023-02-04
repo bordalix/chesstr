@@ -15,6 +15,7 @@ const relays = [
   'wss://nostr.coollamer.com',
   'wss://nostr-relay.alekberg.net',
 ]
+
 const subId = 'my-sub'
 let websockets = []
 
@@ -30,19 +31,13 @@ const storage = {
 const boardUtils = {
   // add missing pieces
   addMissingPieces(pieces) {
-    const divIds = {
-      top: '#topPieces',
-      bottom: '#bottomPieces',
-    }
     boardUtils.cleanMissingPieces()
     for (const piece of Object.keys(pieces)) {
-      const divId = piece.match(/b/)
-        ? board.orientation() === 'black'
-          ? divIds.top
-          : divIds.bottom
-        : board.orientation() === 'white'
-        ? divIds.top
-        : divIds.bottom
+      const divId =
+        (piece.match(/b/) && board.orientation() === 'black') ||
+        (piece.match(/w/) && board.orientation() !== 'black')
+          ? '#topPieces'
+          : '#bottomPieces'
       for (let i = 0; i < pieces[piece]; i += 1) {
         const img = document.createElement('img')
         img.src = `img/chesspieces/wikipedia/${piece}`
@@ -301,7 +296,7 @@ $('#employFen').on('click', () => boardUtils.employFen())
 // change on fen handler
 $('#gameFen').on('change keyup', () => eventListeners.onFen())
 
-// get keys (url will be the seed fpr the private key)
+// get keys (url will be the seed for the private key)
 const [privKey, pubKey] = nostrUtils.getKeys()
 
 // start websockets
