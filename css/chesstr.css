@@ -14,9 +14,10 @@ h1 {
 }
 
 #lead img {
+  height: 1rem;
+  margin-left: 0.5rem;
   position: relative;
   top: 4px;
-  height: 1rem;
 }
 
 #chess .buttons {
