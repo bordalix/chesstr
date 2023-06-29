@@ -11,9 +11,9 @@ let lastmove
 let game = new Chess()
 
 const relays = [
-  'wss://nostr.blocs.fr',
-  'wss://nostr.coollamer.com',
-  'wss://nostr-relay.alekberg.net',
+  'wss://relay.snort.social',
+  'wss://nostr.wine/',
+  'wss://nos.lol',
 ]
 
 const subId = 'my-sub'
