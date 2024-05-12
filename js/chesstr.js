@@ -9,12 +9,11 @@ if (window.location.search === '') {
 let board
 let lastmove
 let game = new Chess()
+let restoringMoves = true
 
-const relays = [
-  'wss://relay.snort.social',
-  'wss://nostr.wine/',
-  'wss://nos.lol',
-]
+const previousEvents = []
+
+const relays = ['wss://nos.lol']
 
 const subId = 'my-sub'
 let websockets = []
@@ -164,7 +163,7 @@ const nostrUtils = {
     return nostrUtils.computeRawPrivkey(node.derivePath(path))
   },
   openWebsockets() {
-    const eventIds = {}
+    const processedEventIds = {}
     for (const relay of relays) {
       const ws = new WebSocket(relay)
       websockets.push(ws)
@@ -178,22 +177,34 @@ const nostrUtils = {
         const filter = { authors: [pubKey] }
         ws.send(JSON.stringify(['REQ', subId, filter]))
         // Send a ping event every 10 seconds to avoid timeout
-        setInterval(() => ws.send(JSON.stringify({ event: 'ping' })), 10000)
+        setInterval(() => ws.send(JSON.stringify({ event: ['ping'] })), 10000)
       }
       // Listen for messages from nostr
       // On a board update, verify sig and update board
-      ws.onmessage = (event) => {
+      ws.onmessage = async (event) => {
+        const olderFirst = (a, b) => a.created_at - b.created_at
         const [msgType, subscriptionId, data] = JSON.parse(event.data)
+        if (msgType === 'EOSE' && restoringMoves) {
+          setTimeout(async () => {
+            for (const eventData of previousEvents.sort(olderFirst)) {
+              const { content, id, sig } = eventData
+              if (processedEventIds[id]) continue
+              if (await nobleSecp256k1.schnorr.verify(sig, id, pubKey)) {
+                eventListeners.onNostr(JSON.parse(content))
+                processedEventIds[id] = true
+              }
+            }
+            restoringMoves = false
+          }, 500)
+        }
         if (msgType === 'EVENT' && subscriptionId === subId) {
           const { content, id, sig } = data
-          // prevent duplicate work on same eventid
-          if (eventIds[id]) return
-          else eventIds[id] = true
-          nobleSecp256k1.schnorr.verify(sig, id, pubKey).then((validSig) => {
-            if (validSig) {
-              eventListeners.onNostr(JSON.parse(content))
-            }
-          })
+          if (processedEventIds[id]) return
+          if (restoringMoves) previousEvents.push(data)
+          else if (await nobleSecp256k1.schnorr.verify(sig, id, pubKey)) {
+            eventListeners.onNostr(JSON.parse(content))
+            processedEventIds[id] = true
+          }
         }
       }
     }
