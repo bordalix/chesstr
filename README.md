@@ -4,7 +4,9 @@
 
 https://chesstr.pages.dev
 
-Want to play chess with a friend anywhere in the world? Presenting chesstr, a virtual chessboard powered by nostr.
+Want to play chess with a friend anywhere in the world?
+
+Presenting chesstr, a virtual chessboard powered by nostr.
 
 Just create a random url and share it with your friend.
 
