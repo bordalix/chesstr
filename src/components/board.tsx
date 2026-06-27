@@ -1,5 +1,6 @@
 import { Chessboard, type PieceDropHandlerArgs } from 'react-chessboard'
 import { useEffect, useRef, useState } from 'react'
+import { highlight } from '../lib/highlight'
 import { showToast } from '../lib/toast'
 import { nostr } from '../lib/nostr'
 import { Chess } from 'chess.js'
@@ -39,13 +40,18 @@ export default function Board() {
   }, [chessGame, position])
 
   useEffect(() => {
-    nostr.subscribeToMoves((fen: string) => {
+    nostr.subscribeToMoves((payload) => {
       try {
-        chessGame.load(fen)
+        if (payload.move) {
+          chessGame.move(payload.move)
+          highlight([payload.move.from, payload.move.to])
+        }
+        if (payload.fen) {
+          chessGame.load(payload.fen)
+          highlight()
+        }
         setPosition(chessGame.fen())
-      } catch {
-        console.error('Invalid move received:', fen)
-      }
+      } catch {}
     })
   }, [chessGame])
 
@@ -62,8 +68,9 @@ export default function Board() {
 
     try {
       chessGame.move(move)
+      nostr.sendMove(move)
       setPosition(chessGame.fen())
-      nostr.sendFEN(chessGame.fen())
+      highlight([sourceSquare, targetSquare])
       return true
     } catch {
       return false
@@ -72,8 +79,8 @@ export default function Board() {
 
   // set the chessboard options
   const chessboardOptions = {
-    id: 'play-vs-random',
     boardOrientation,
+    id: 'chesstr',
     onPieceDrop,
     position,
   }

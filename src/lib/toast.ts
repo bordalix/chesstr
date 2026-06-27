@@ -1,4 +1,4 @@
-export function showToast(message: string, duration = 2100) {
+export const showToast = (message: string, duration = 2100) => {
   const container = document.getElementById('toast-container')!
   const toast = document.createElement('div')
   toast.classList.add('toast')

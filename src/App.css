@@ -62,3 +62,7 @@ p {
   opacity: 1;
   transform: translateX(0);
 }
+
+.highlight {
+  border: 2px solid rgb(108, 177, 235);
+}
