@@ -1,0 +1,64 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 360px;
+  margin: 0 auto;
+  padding-top: 2rem;
+}
+
+h1 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+details {
+  background-color: rgba(236, 210, 166, 0.3);
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  & p {
+    margin: 1rem 0;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+p {
+  margin: 0;
+}
+
+/* Persistent container fixed to a corner of the screen */
+#toast-container {
+  left: calc((100% - 360px) / 2 + 30px);
+  flex-direction: column;
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  width: 300px;
+  gap: 10px;
+}
+
+/* Individual toast styling */
+.toast {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(10px);
+  background-color: #333;
+  font-family: sans-serif;
+  text-align: center;
+  border-radius: 8px;
+  color: #fff;
+  padding: 6px;
+  width: 100%;
+  opacity: 0;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* Class to trigger slide-in visual state */
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}

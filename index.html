@@ -1,121 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
+    <title>Chesstr</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Primary Meta Tags -->
-    <title>Chesstr</title>
     <meta name="title" content="Chesstr" />
     <meta name="description" content="A chessboard powered by Nostr" />
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://chesstr.pages.dev/" />
     <meta property="og:title" content="Chesstr" />
+    <meta property="og:image" content="/img/chesstr_og.png" />
+    <meta property="og:url" content="https://chesstr.pages.dev/" />
     <meta property="og:description" content="A chessboard powered by Nostr" />
-    <meta property="og:image" content="/img/assets/chesstr_og.png" />
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://chesstr.pages.dev/" />
     <meta property="twitter:title" content="Chesstr" />
-    <meta
-      property="twitter:description"
-      content="A chessboard powered by Nostr"
-    />
-    <meta property="twitter:image" content="/img/assets/chesstr_twitter.png" />
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="img/assets/king.png" type="image/x-icon" />
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/chesstr.css" />
-    <link rel="stylesheet" href="css/chessboard-1.0.0.min.css" />
-    <!-- Lightning -->
+    <meta property="twitter:url" content="https://chesstr.pages.dev/" />
+    <meta property="twitter:image" content="/img/chesstr_twitter.png" />
+    <meta property="twitter:description" content="A chessboard powered by Nostr" />
     <meta name="lightning" content="bordalix@coinos.io" />
-    <!-- PWA -->
     <meta name="theme-color" content="#ffffff" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="/img/assets/king-192.png" />
+    <link rel="apple-touch-icon" href="/img/king-192.png" />
+    <link rel="shortcut icon" href="/img/king.png" type="image/x-icon" />
   </head>
-
   <body>
-    <script src="js/jquery-3.6.2.min.js"></script>
-    <script src="js/chessboard-1.0.0.min.js"></script>
-    <script src="js/chess-1.0.0-alpha.0.min.js"></script>
-
-    <script src="https://bitcoincore.tech/apps/bitcoinjs-ui/lib/bitcoinjs-lib.js"></script>
-    <script src="https://bundle.run/bip32@2.0.6"></script>
-    <script src="https://bundle.run/buffer@6.0.3"></script>
-    <script src="https://bundle.run/noble-secp256k1@1.2.14"></script>
-
-    <section id="chess">
-      <h1>Chesstr</h1>
-      <div id="lead">
-        <p>A chessboard powered by Nostr</p>
-        <p>
-          <a href="https://github.com/bordalix/chesstr"
-            ><img src="img/assets/github.png"
-          /></a>
-          <a href="https://twitter.com/bordalix/status/1605913469370261505"
-            ><img src="img/assets/twitter.png"
-          /></a>
-          <a
-            href="https://snort.social/p/npub1vt803quxxq32fuwkp42g2lyaw2t9qupvnl3z0vyc3s9kudkyhn8qt28cxv"
-            ><img src="img/nostr.png"
-          /></a>
-        </p>
-      </div>
-      <details>
-        <summary>Know more</summary>
-        <p>Just create a random url and share it with your friend.</p>
-        <p>
-          The full url is used as the seed for the private key, so the same url
-          means the same key, and the same key means the same board.
-        </p>
-        <p>
-          Using Nostr, each client subscribe to itself, and sends an event to
-          itself when the board changes, putting them in sync.
-        </p>
-        <p>
-          Repo at
-          <a href="https://github.com/bordalix/chesstr"
-            >https://github.com/bordalix/chesstr</a
-          >
-        </p>
-        <p>
-          Twitter
-          <a href="https://twitter.com/bordalix/status/1605913469370261505"
-            >thread</a
-          >
-          for discussion
-        </p>
-      </details>
-      <p id="status"></p>
-      <div id="topPieces" class="pieces"></div>
-      <div id="board1"></div>
-      <div id="bottomPieces" class="pieces"></div>
-      <div class="buttons">
-        <p>
-          <button id="resetGame">Reset</button>
-          <button id="flipBoard">Flip board</button>
-        </p>
-        <p>
-          <input id="gameFen" type="text" placeholder="FEN" size="10" />
-          <button id="employFen" disabled>Apply</button>
-        </p>
-      </div>
-      <div id="info">
-        <p id="relay">Connecting to nostr relays</p>
-        <p id="url"></p>
-      </div>
-    </section>
-
-    <script src="js/chesstr.js"></script>
-
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker
-          .register('/sw.js', { scope: '/' })
-          .then((registration) => registration.update())
-          .catch((error) => console.error(`Registration failed with ${error}`))
-      }
-    </script>
+    <div id="toast-container"></div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
