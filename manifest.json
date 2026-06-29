@@ -1,0 +1,26 @@
+{
+  "name": "Chesstr",
+  "short_name": "Chesstr",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/img/assets/king.png",
+      "sizes": "100x98",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/assets/king-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/assets/maskable_icon.png",
+      "sizes": "274x274",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
